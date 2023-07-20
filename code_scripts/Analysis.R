@@ -95,6 +95,26 @@ for(location in locations){
   dim_pick=as.numeric(which(fnn<fnn_th)[1]) #Pick first dimension where FNN falls below the fnn_threshold
   #dim_pick=3
   
+  
+  #Step 4: Calculate Average Lyaponov exponent 
+  
+  #figure out how much of the signal can be used based on longest evolution period
+  #to be tested
+  n.reference=10
+  Ne=length(data_signal)-(lag_pick*(dim_pick-1)) #number of evaluation points 
+  avgmax.ref=Ne-scale_pick-n.reference-2
+  avgLE_spectrum <- lyapunov(data_signal, dimension=dim_pick, tlag=lag_pick,
+                             scale=scale_pick, local.dimension=dim_pick, reference=(1:(avgmax.ref)),
+                             n.reference=n.reference)
+  
+  avgLE_val_mat = matrix(unlist(avgLE_spectrum),nrow=avgmax.ref)
+  avg.LL=rowMeans(avgLE_val_mat)
+  
+  raw_data$avgLLE <- avg.LL
+  
+  id = names[count]
+  
+  
   stats_output = c(names[counter], y_range, y_num, raw_avg, raw_range, lag_pick, dim_pick)
   stats_table = rbind(stats_table, stats_output)
   
@@ -109,4 +129,4 @@ for(location in locations){
 
 colnames(stats_table) <- c("flow ts" ,"Year Range", "# of Years", "Mean (MAF)", "Flow Range (MAF)", "Time Lag", "Dim embedding")
 stats_table
-write.table(stats_table, file=paste(datadir,"ts_info.txt", sep=""),row.names=F, col.names= T)
+write.csv(stats_table, file=paste(datadir,"ts_info.csv", sep=""),row.names=F)
