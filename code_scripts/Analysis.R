@@ -1,6 +1,7 @@
 rm(list=ls())
-source("./function_library.r")
+source("./code_scripts/function_library.r")
 library(fractal) #needed to use timeLag func 
+library(zoo)
 
 
 #output directories
@@ -12,9 +13,9 @@ datadir = "./Output_Data/"
 recon_col=2 
 
 #window needed for rolling average, rolling variance to match avg LLE 
-roll_window = 37
+#roll_window = 39
 
-scale = 1000000 #want to convert everything to MAF
+scale = 1e6 #want to convert everything to MAF
 
 
 #Threshold for False nearest neighbors for dimension picking
@@ -40,6 +41,7 @@ stats_table = data.frame()
 
 #initiate counter to use as index for each list
 counter = 0
+#location = locations[7]
 for(location in locations){
   counter = counter + 1 
   
@@ -93,7 +95,6 @@ for(location in locations){
   #Step 3: Calculate the embedding dimension using false nearest neighbors
   fnn=FNN(data_signal, dimension=10, tlag=lag_pick, rtol=rt, olag=1)[1,]
   dim_pick=as.numeric(which(fnn<fnn_th)[1]) #Pick first dimension where FNN falls below the fnn_threshold
-  #dim_pick=3
   
   
   #Step 4: Calculate Average Lyaponov exponent 
@@ -109,24 +110,46 @@ for(location in locations){
   
   avgLE_val_mat = matrix(unlist(avgLE_spectrum),nrow=avgmax.ref)
   avg.LL=rowMeans(avgLE_val_mat)
+  avg_write = matrix(NA, nrow = length(raw_data[,2]), ncol = 1)
+  #calculates how far from the starting year in order to be centered
+  dist = round(((length(raw_data[,2]) - length(avg.LL))/2), digit = 0)
   
-  raw_data$avgLLE <- avg.LL
+  avg_write[(dist+1):(dist+length(avg.LL))] = avg.LL
   
-  id = names[count]
+  raw_data$avgLLE <- avg_write
   
-  
-  stats_output = c(names[counter], y_range, y_num, raw_avg, raw_range, lag_pick, dim_pick)
-  stats_table = rbind(stats_table, stats_output)
-  
+  #find the difference in length of avg LLE and SF
+  #avgLLE_dif = length(raw_data[,2]) - length(avg.LL)
+
+  #need to figure this out 
+  roll_window = scale_pick + n.reference + (lag_pick*(dim_pick-1)) +2 + 1
+  #2 is subtracted in avg.ref and 1 is added to get additional year
   
   #calculate a centered rolling mean and rolling variance
-  #raw_data$flow_mean <- rollapply(raw_data$flow, width = roll_window, FUN = mean, align = "center", fill=NA)
-  #raw_data$flow_var <- rollapply(raw_data$flow, width=roll_window, FUN = var , align="center", fill = NA)
+  raw_data$flow_mean <- rollapply((raw_data[,2]/scale), width = roll_window, FUN = mean, align = "center", fill=NA)
+  raw_data$flow_var <- rollapply((raw_data[,2]/scale), width=roll_window, FUN = var , align="center", fill = NA)
+  
+  #mean.diff = length(raw_data[,2]) - length(na.omit(raw_data$flow_mean))
+  #var.diff = length(raw_data[,2]) - length(na.omit(raw_data$flow_var))
+  
+  id = names[counter]
+  
+  
+  stats_output = c(names[counter], y_range, y_num, raw_avg, raw_range, 
+                   lag_pick, dim_pick, roll_window)
+                   #avgLLE_dif, mean.diff, var.diff, roll_window)
+  
+  stats_table = rbind(stats_table, stats_output)
+  
+  write.csv(raw_data, file = paste(datadir,id,"_ts.csv", sep=""), row.names = F)
   
 }
 #prints table of embedding parameters  for each location 
 
 
-colnames(stats_table) <- c("flow ts" ,"Year Range", "# of Years", "Mean (MAF)", "Flow Range (MAF)", "Time Lag", "Dim embedding")
+colnames(stats_table) <- c("flow ts" ,"Year Range", "# of Years", "Mean (MAF)", 
+                           "Flow Range (MAF)", "Time Lag", "Dim embedding", 
+                           #"avg LLE diff", "mean diff ", "var diff", "roll window")
+                           "roll window")
 stats_table
 write.csv(stats_table, file=paste(datadir,"ts_info.csv", sep=""),row.names=F)
