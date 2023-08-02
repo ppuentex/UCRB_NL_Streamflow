@@ -109,6 +109,12 @@ for(location in locations){
                              n.reference=n.reference)
   
   avgLE_val_mat = matrix(unlist(avgLE_spectrum),nrow=avgmax.ref)
+  
+  #get the global LLE for each dim at scale pick of 20 years 
+  dim_mean_colum = colMeans(avgLE_val_mat)
+  global_avgLLE = round(mean(dim_mean_colum),digits = 2)
+  
+  #get avg LLE time series 
   avg.LL=rowMeans(avgLE_val_mat)
   avg_write = matrix(NA, nrow = length(raw_data[,2]), ncol = 1)
   #calculates how far from the starting year in order to be centered
@@ -136,7 +142,7 @@ for(location in locations){
   
   
   stats_output = c(names[counter], y_range, y_num, raw_avg, raw_range, 
-                   lag_pick, dim_pick, roll_window)
+                   lag_pick, dim_pick, roll_window, global_avgLLE)
                    #avgLLE_dif, mean.diff, var.diff, roll_window)
   
   stats_table = rbind(stats_table, stats_output)
@@ -150,6 +156,6 @@ for(location in locations){
 colnames(stats_table) <- c("flow ts" ,"Year Range", "# of Years", "Mean (MAF)", 
                            "Flow Range (MAF)", "Time Lag", "Dim embedding", 
                            #"avg LLE diff", "mean diff ", "var diff", "roll window")
-                           "roll window")
+                           "roll window", "global average LLE")
 stats_table
 write.csv(stats_table, file=paste(datadir,"ts_info.csv", sep=""),row.names=F)
