@@ -26,3 +26,9 @@ These are the streamflow time series files from the [Bureau of Reclamation](http
 
 #### Output_Data 
 These are the output analysis time series such as the streamflow signal, average Local Lyapunov Exponent (LLE), rolling average, and rolling variance. Including simple statistics for each gauge and time delay, dimension embedding parameters, and global average LLE for each gauge. 
+
+#### code_scripts
+These are the R scripts that contain the `function_library.R` necessary for running the analysis and figures. 
+
+#### Figures 
+This folder contains all figures that are created from the R scripts. 
