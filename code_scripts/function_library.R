@@ -1286,14 +1286,14 @@ sizer <- function(rotate=TRUE){
 }
 ######################################################
 
-wplot=function(X,start,dj=0.025,u.sig=0.95,l.sig=0.9,name='Power_Spectrum'){
-  # requires fcontour and sig_label funtions
+wplot=function(X,start,dj=0.025,u.sig=0.95,l.sig=0.9,name='Power_Spectrum', graphdir = graphdir){
   # X= time series to be analyzed
   # start = start year of the time series
   
   # requires function: fcontour
   #X=X/10^6
   library(fields)
+  library(DescTools) #to find the area below the curve
   yr = seq(start,start+length(X)-1)  # No. of years for the starting year of "start"
   
   data=matrix(0,length(X),2)
@@ -1365,24 +1365,24 @@ wplot=function(X,start,dj=0.025,u.sig=0.95,l.sig=0.9,name='Power_Spectrum'){
   
   ### plot the local and global power spectrums with key bar
   
-  device = png
+  #device = png
   
-  ext = "png"
+  #ext = "png"
   
-  device(paste(name,ext, sep="."), width=1200, height=600)
+  png(paste(graphdir,name,".png", sep = ""), width=1400, height=600)
   
-  par(mfrow=c(1,3), cex=2)
+  par(mfrow=c(1,3), cex=2,cex.axis = 2.5, cex.lab =2.5)
   
-  layout(matrix(c(1,2,3),ncol=3, nrow=1),widths = c(.69,.06,.25))#c(.575,.1,.325)
+  layout(matrix(c(1,2,3),ncol=3, nrow=1),widths = c(.69,.07,.25))#c(.575,.1,.325)
   
-  par(mar=c(4,5,2,1))
+  par(mar=c(6,6,6,1))
   
   fcontour(data[,1], log(wlt$period), t(pow), levels= my.levels,col=my.cols, ylim=c(log(2), max(log(wlt$period))), nlevels=5,ylab="", xlab="",
            
            plot.axes = {
              
-             axis(1,cex.axis=2)
-             axis(2 , at = log(label), labels = label, cex.axis=2)
+             axis(1,cex.axis=2.5)
+             axis(2 , at = log(label), labels = label, cex.axis=2.5)
              
            }
   )
@@ -1391,10 +1391,10 @@ wplot=function(X,start,dj=0.025,u.sig=0.95,l.sig=0.9,name='Power_Spectrum'){
   
   ## plot Cone of Influence
   lines(data[,1], log(wlt$coi), lty=2,lwd=2,col="black")
-  mtext("Period (Years)", side = 2, line = 3.5, cex=1.5)
+  mtext("Period (Years)", side = 2, line = 3.7, cex=2)
   
-  mtext("Year", side = 1, line = 2.75, cex=1.5)
-  
+  mtext("Year", side = 1, line = 3, cex=2)
+  mtext(side=3,"(b)",adj=0, line =1, cex=2.5)
   ### plot key bar
   n=seq(1,length(my.levels),len=5)
   
@@ -1402,13 +1402,13 @@ wplot=function(X,start,dj=0.025,u.sig=0.95,l.sig=0.9,name='Power_Spectrum'){
   
   zz=seq(0,length(my.levels)-1)
   
-  cbar(nlevels=64,col=my.cols, levels=zz, key.title = "",key.axes = {axis(2,at =n , labels = round(lbl, digits=1), cex.axis=2)})
+  cbar(nlevels=64,col=my.cols, levels=zz, key.title = "",key.axes = {axis(2,at =n , labels = round(lbl, digits=1), cex.axis=2.5)})
   
-  mtext(parse(text=paste("(",units,"^2)")), side = 2, adj=.57,line = 4)
+  mtext(parse(text=paste("(",units,"^2)")), side = 2, adj=.47,line = 5)
   
-  mtext("Power /", side = 2, adj=.45,line = 4) #.27
+  mtext("Power /", side = 2, adj=.35,line = 5) #.27
   
-  mtext(paste(DIVF), side = 2, adj=.51,line = 4)
+  mtext(paste(DIVF), side = 2, adj=.41,line = 5)
   
   
   ### plot Global power
@@ -1425,27 +1425,53 @@ wplot=function(X,start,dj=0.025,u.sig=0.95,l.sig=0.9,name='Power_Spectrum'){
   sig.power_all = VAL #################################3
   
   #original 
-  plot(sig.power,log(wlt$period), ylab="", xlab="", type="l", ylim=range(log(wlt$period)), xlim=range(VAL,xx$sig/DIVF),lwd=2,main=, axes=F, yaxs="i")#,col="blue")
-  #lines(sig.power,log(wlt$period),col="red",lwd=2)
-  axis(1, cex.axis=2)
+  #plot(sig.power,log(wlt$period), ylab="", xlab="", type="l", ylim=range(log(wlt$period)), xlim=range(VAL,xx$sig/DIVF),lwd=2,main=, axes=F, yaxs="i")#,col="blue")
   
-  axis(2 , at = log(label), labels = label,las=2, cex.axis=2)
+  #modified to show the area fraction 
+  plot(sig.power_all,log(wlt$period), ylab="", xlab="", type="l", ylim=range(log(wlt$period)), xlim=range(VAL,xx$sig/DIVF),lwd=2,main=, axes=F, yaxs="i")#,col="blue")
+  
+  #lines(sig.power,log(wlt$period),col="red",lwd=2)
+  axis(1, cex.axis=2.5)
+  
+  axis(2 , at = log(label), labels = label,las=2, cex.axis=2.5)
   
   box()
+  mtext(side=3,"(c)",adj=0,cex=2.5, line =1)
+  mtext("Period (Years)", side = 2, line = 4, cex=2)
   
-  mtext("Period (Years)", side = 2, line = 4, cex=1.5)
+  mtext("Global Power", side = 1, adj=.2,line = 3, cex=2)
   
-  mtext("Global Power", side = 1, adj=.3,line = 2.75,, cex=1.5)
-  
-  mtext(parse(text=paste("(",units,"^2)")), side = 1, adj=.85,line =3.2, cex=1.5) #.8
+  mtext(parse(text=paste("(",units,"^2)")), side = 1, adj=.85,line =3.2, cex=2) #.8
   
   
   ### plot confidence level
   lines(xx$sig/DIVF, log(wlt$period), col="red",lty=2,lwd=2)
-  lines(xxx$sig/DIVF, log(wlt$period), col="blue",lty=2,lwd=2)
   
   ## add significant power with different color
   sig.period = log(wlt$period)
+  
+  wvlt_per = wlt$period #needed for area calculation 
+  
+  #modifying to get the area 
+  area_list = which(is.na(sig.power_upper)==FALSE)
+  split_list = split(area_list, cumsum(c(1, diff(area_list) != 1)))
+  
+  area = AUC(log(wvlt_per), sig.power_all, method = "trapezoid")
+  area_sections = c()
+  
+  for(split in split_list){
+    i_start = split[1]; i_end = split[length(split)]
+    polygon(c(0,0,sig.power_all[i_start], sig.power_all[i_end], sig.power_all[i_start:i_end]), 
+            c(sig.period[i_end], sig.period[i_start],sig.period[i_start], sig.period[i_end],sig.period[i_start:i_end]), col = "gray", border = NA)
+    area_section <- AUC(log(wvlt_per[i_start:i_end]), sig.power_upper[i_start:i_end],  method = "trapezoid")
+    area_sections[length(area_sections) + 1] <- area_section
+  }
+  
+  area_fraction = sum(area_section)/area
+  
+  #return this value as part of the wPlot()
+  
+  
   
   sig.level1 = xx$sig/DIVF
   sig.level2 = xxx$sig/DIVF
@@ -1453,20 +1479,17 @@ wplot=function(X,start,dj=0.025,u.sig=0.95,l.sig=0.9,name='Power_Spectrum'){
   sig.power2 = VAL; sig.power2[sig.power2<sig.level2]=NaN; sig.power2[sig.power2>sig.level1]=NaN
   
   
-  lines(sig.power1,sig.period,col="red",lwd=2,lty=3)
-  lines(sig.power2,sig.period,col="blue",lwd=2,lty=3)
-  
   # add legend
-  ltype=c(3,3,2,2) 
+  ltype=c(2) 
   
   displvlu=u.sig*100
-  displvll=l.sig*100
+  #displvll=l.sig*100
   
-  lgd=c(paste(Re(displvlu),"Significant Power"),paste(Re(displvll),"Significant Power"),paste(Re(displvlu), "% confidence level"),paste(Re(displvll), "% confidence level"))#, "% confidence level") 
+  lgd=c(paste(Re(displvlu), "% confidence level"))#, "% confidence level") 
   
-  colr=c("red", "blue","red", "blue")#"darkgreen")
+  colr=c("red")#"darkgreen")
   
-  legend("bottomright",lgd,lty=ltype,col=colr,lwd=c(2,2),cex=1.5,bty="n")
+  legend("bottomright",lgd,lty=ltype,col=colr,lwd=c(2,2),cex=2.5,bty="n")
   
   dev.off()
   
@@ -1476,8 +1499,172 @@ wplot=function(X,start,dj=0.025,u.sig=0.95,l.sig=0.9,name='Power_Spectrum'){
   
   #Result=list(per=periods, sig.power2=sig.power2) #original 
   #modified 
-  Result=list(sig.power_upper = sig.power_upper, sig.power_all = sig.power_all, wlt = wlt, sig.level1=sig.level1, sig.period = sig.period)
+  Result=list(sig.power_upper = sig.power_upper, sig.power_all = sig.power_all, wlt = wlt, sig.level1=sig.level1, sig.period = sig.period, area_fraction = area_fraction)
   return(Result)
+  
+}
+#############################
+wplot_area=function(X,start,dj=0.025,u.sig=0.95, name='area-fraction', graphdir = graphdir, letter_label = '(a)'){
+  # requires fcontour and sig_label functions
+  # X= time series to be analyzed
+  # start = start year of the time series
+  
+  # requires function: fcontour
+  #X=X/10^6
+  library(fields)
+  library(DescTools) #to find the area below the curve
+  yr = seq(start,start+length(X)-1)  # No. of years for the starting year of "start"
+  
+  data=matrix(0,length(X),2)
+  
+  data[,1]=yr
+  
+  data[,2]=X
+  
+  wlt=wavelet(X,dj)
+  
+  #lvl  = sig #significant level
+  
+  XL   = as.vector(X) # Format data
+  
+  xx=CI(u.sig,XL, "w",dj)
+  #xxx=CI(l.sig,XL,"w",dj)
+  #xx=noise(lvl,XL, "w",wlt,length(X))
+  
+  #########first row from wave/power is smallest period
+  
+  units="MaF"
+  #units="acre-ft"
+  #units="index"
+  
+  #coi=wlt$coi
+  
+  divf=mean(wlt$power)/5
+  
+  DIVF=signif(divf, digits=2)
+  
+  pow=wlt$power/(DIVF)
+  
+  
+  #my.levels <- quantile(pow, probs = seq(0, 1, len=64))
+  
+  #my.cols = tim.colors(64)
+  #my.cols = rainbow(64)
+  
+  p=t(pow)
+  
+  for( i in 1:length(p[,1])){
+    p[i,]=rev(p[i,])
+  }  
+  
+  xper=subset(wlt$period, wlt$period<(.5*length(data[,1])))
+  
+  y=1:length(xper)
+  
+  del=length(wlt$period)-length(xper)
+  
+  P=p[,(1+del):(length(wlt$period))]
+  
+  label=c(2,4,8,16,32,64,128,256,512)
+  
+  l=length(wlt$power[1,])
+  
+  val=1:length(wlt$period)
+  
+  for( i in 1:length(wlt$period)){
+    
+    val[i]=mean(pow[i,])
+    
+    
+  }
+  
+  
+  VAL=val
+  
+  ### plot the local and global power spectrums with key bar
+  
+  #device = png
+  
+  #ext = "png"
+  
+  png(paste(graphdir,name,"_AF.png",sep=""), width=4, height=6,units='in', res = 300)
+  
+  
+  ### plot Global power
+  
+  par(usr=c(min(VAL), max(VAL), min(log(wlt$period)), max(log(wlt$period))))
+  sig.level = xx$sig/DIVF #modified for getting the upper sig 
+  sig.power = VAL; sig.power[sig.power>sig.level]=NaN #original
+  
+  #modified to get what we want #################################3
+  #this is the time series above the upper sig level 
+  sig.power_upper = VAL; sig.power_upper[sig.power_upper<=sig.level]=NaN
+  #this is all the time series 
+  sig.power_all = VAL #################################3
+  
+  #modified to show the area fraction 
+  plot(sig.power_all,log(wlt$period), ylab="", xlab="", type="l", ylim=range(log(wlt$period)), xlim=range(VAL,xx$sig/DIVF),lwd=2,main=, axes=F, yaxs="i")#,col="blue")
+  
+  #lines(sig.power,log(wlt$period),col="red",lwd=2)
+  axis(1, cex.axis=1.5)
+  
+  axis(2 , at = log(label), labels = label,las=2, cex.axis=1.5)
+  
+  box()
+  mtext("Period (Years)", side = 2, line = 3, cex=1.5)
+  mtext(text=paste("Global Power"), side = 1, adj=.3,line = 2.75, cex=1.5)
+  mtext(parse(text=paste("(",units,"^2)")), side = 1, adj=1,line =3.2, cex=1.5) #.8
+
+  #mtext(parse(text=paste("(",units,"^2)")), side = 1, adj=.85,line =3.2, cex=1) #.8
+  
+  
+  ### plot confidence level
+  lines(xx$sig/DIVF, log(wlt$period), col="red",lty=2,lwd=2)
+  
+  ## add significant power with different color
+  sig.period = log(wlt$period)
+  
+  wvlt_per = wlt$period #needed for area calculation 
+  
+  #modifying to get the area 
+  area_list = which(is.na(sig.power_upper)==FALSE)
+  split_list = split(area_list, cumsum(c(1, diff(area_list) != 1)))
+  
+  area = AUC(log(wvlt_per), sig.power_all, method = "trapezoid")
+  area_sections = c()
+  
+  for(split in split_list){
+    i_start = split[1]; i_end = split[length(split)]
+    polygon(c(0,0,sig.power_all[i_start], sig.power_all[i_end], sig.power_all[i_start:i_end]), 
+            c(sig.period[i_end], sig.period[i_start],sig.period[i_start], sig.period[i_end],sig.period[i_start:i_end]), col = "gray", border = NA)
+    area_section <- AUC(log(wvlt_per[i_start:i_end]), sig.power_upper[i_start:i_end],  method = "trapezoid")
+    area_sections[length(area_sections) + 1] <- area_section
+  }
+  
+  area_fraction = sum(area_sections)/area
+  
+  #return this value as part of the wPlot()
+  mtext(paste(letter_label), side=3,adj=-0.15, line = 1, cex=1.5)
+  mtext(paste(name,"AF =",round(area_fraction,4)), side = 3, line = 0, cex=1.5)
+  
+  sig.level1 = xx$sig/DIVF
+  sig.power1 = VAL; sig.power1[sig.power1<sig.level1]=NaN
+  
+  # add legend
+  ltype=c(2) 
+  
+  displvlu=u.sig*100
+  
+  
+  lgd=c(paste(Re(displvlu),"% confidence level"))#, "% confidence level") 
+  
+  colr=c("red")#"darkgreen")
+  
+  legend("topright",lgd,lty=ltype,col=colr,lwd=c(2),cex=1.1,bty="n")
+  
+  dev.off()
+  
+  return(area_fraction)
   
 }
 #############################
