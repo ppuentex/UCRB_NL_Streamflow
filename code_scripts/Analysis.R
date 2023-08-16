@@ -110,8 +110,14 @@ for(location in locations){
   
   avgLE_val_mat = matrix(unlist(avgLE_spectrum),nrow=avgmax.ref)
   
+  #get the average LLE for time step of 64 years 
+  avgLE_spectrum_test <- lyapunov(data_signal, dimension=dim_pick, tlag=lag_pick,
+                             scale=exp_scale[8], local.dimension=dim_pick, reference=(1:(Ne-exp_scale[8]-n.reference-2)),
+                             n.reference=n.reference)
+  
+  avgLE_val_mat_test = matrix(unlist(avgLE_spectrum_test),nrow=(Ne-exp_scale[8]-n.reference-2))
   #get the global LLE for each dim at scale pick of 20 years 
-  dim_mean_colum = colMeans(avgLE_val_mat)
+  dim_mean_colum = colMeans(avgLE_val_mat_test)
   global_avgLLE = round(mean(dim_mean_colum),digits = 2)
   
   #get avg LLE time series 
