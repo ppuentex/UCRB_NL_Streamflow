@@ -38,6 +38,8 @@ lower_sig_list = c(0.7, 0.65, 0.55, 0.55, 0.6, 0.85, 0.9)
 
 #create dataframe to store the embedding parameters 
 stats_table = data.frame()
+#create dataframe to store the high and low predictability years and values 
+pred_table = data.frame(); pred_table_names = c()
 
 #initiate counter to use as index for each list
 counter = 0
@@ -82,6 +84,7 @@ for(location in locations){
   #Step 1: wavelet transform of streamflow 
   data_wavelet=decompose2(raw_data[,2]/scale, sig=upper_sig, dj=0.025)
   data_signal = data_wavelet$sig
+  data_sawp=apply(data_wavelet$sig.sawp,1, sum)
   raw_data$signal <- data_signal
   
   #Step 2: Time delay embedding 
@@ -137,6 +140,10 @@ for(location in locations){
   roll_window = scale_pick + n.reference + (lag_pick*(dim_pick-1)) +2 + 1
   #2 is subtracted in avg.ref and 1 is added to get additional year
   
+  
+  #calculate SAWP & store 
+  raw_data$sawp_avg <- rollapply((data_sawp), width = roll_window, FUN = mean, align = 'center', fill = NA)
+  
   #calculate a centered rolling mean and rolling variance
   raw_data$flow_mean <- rollapply((raw_data[,2]/scale), width = roll_window, FUN = mean, align = "center", fill=NA)
   raw_data$flow_var <- rollapply((raw_data[,2]/scale), width=roll_window, FUN = var , align="center", fill = NA)
@@ -165,3 +172,10 @@ colnames(stats_table) <- c("flow ts" ,"Year Range", "# of Years", "Mean (MAF)",
                            "roll window", "global average LLE")
 stats_table
 write.csv(stats_table, file=paste(datadir,"ts_info.csv", sep=""),row.names=F)
+
+#outputting the years and values of high and low predictability for each location
+columns(pred_table) <- pred_table_names
+pred_table 
+
+
+
