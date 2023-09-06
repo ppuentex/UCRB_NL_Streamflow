@@ -2,6 +2,7 @@ rm(list=ls())
 source("./code_scripts/function_library.r")
 library(quantmod) #get peaks and valleys of time series 
 library(scatterplot3d) #needed for phase space plots 
+library(corrplot) #correlation plots 
 
 #input directories 
 datadir = "./Output_Data/"
@@ -14,16 +15,18 @@ graphdir = "./Figures/"
 #df[,2] = flow
 #df[,3] = signal 
 #df[,4] = avg_LLE
-#df[,5] = rolling mean
-#df[,6] = rolling variance 
+#df[,5] = sawp_avg 
+#df[,6] = rolling mean
+#df[,7] = rolling variance 
 
 #specify columns 
 yr_col = 1 
 flow_col = 2
 signal_col = 3
 avg_LLE_col = 4
-roll_mean_col = 5
-roll_var_col = 6
+sawp_col = 5
+roll_mean_col = 6
+roll_var_col = 7
 
 #parameters 
 high_pred_col = "#99CCFF"
@@ -90,6 +93,14 @@ plot(leesferry_long_df[,yr_col], data_signal, ylim = c(0, range(data_signal)[2])
 mtext(side=3,"(d)",adj=0,cex=2)
 dev.off()
 
+png(paste(graphdir,"leesferry-long_sawp.png",sep = ""), width = 400, height = 150, units='mm', res = 300)
+par(mfrow=c(1,1),mar=c(4,5,3,1), mgp = c(2.5, 1, 0), cex.axis = 2, cex.lab =2)
+plot(leesferry_long_df[,yr_col], leesferry_long_df[,sawp_col], 
+     type = 'l', lwd = 2.5, col= 'black', panel.first = grid(NULL,NULL, lty = 3, col = "grey"),
+     xlab = "Years", ylab = "SAWP", cex.lab = 2, 
+     cex.axis = 2)
+mtext(side=3,"(e)",adj=0,cex=2)
+dev.off()
 
 
 #temp: leesferry-long streaflow, signal, avg LLE 
@@ -262,10 +273,12 @@ par(mfcol=c(3,1), mar=numeric(4), oma = c(6, 6, 1, 4),  mgp = c(2, .6, 0)) #oma(
 plot(leesferry_long_df[,yr_col], leesferry_long_df[,avg_LLE_col], type = 'l', 
      #panel.first = rect(c(LLE_lowerbound1, LLE_lowerbound2, LLE_lowerbound3, LLE_lowerbound4), -2, c(LLE_upperbound1, LLE_upperbound2, LLE_upperbound3, LLE_upperbound4), 32, col=high_pred_col, border=NA),
      panel.first = rect(c(LLE_lowerbound5, LLE_lowerbound6, LLE_lowerbound7, LLE_lowerbound8), -2, c(LLE_upperbound5, LLE_upperbound6, LLE_upperbound7, LLE_upperbound8), 32, col=low_pred_col, border=NA),
-     ylim = c(avglle_l,avglee_u),
+     ylim = c(avglle_l,avglee_u), #panel.first = grid(NULL,NULL, lty = 3, col = "grey"),
      axes = FALSE, lwd = 2)
 lines(leesferry_long_df[,yr_col], leesferry_long_df[,avg_LLE_col],col='black', lwd=2, 
       panel.first = rect(c(LLE_lowerbound1, LLE_lowerbound2, LLE_lowerbound3, LLE_lowerbound4), -2, c(LLE_upperbound1, LLE_upperbound2, LLE_upperbound3, LLE_upperbound4), 32, col=high_pred_col, border=NA))
+lines(leesferry_long_df[,yr_col], leesferry_long_df[,avg_LLE_col],col='black', lwd=2, 
+      panel.first = grid(NULL,NULL, lty = 3, col = "grey"))
 abline(h=-0.05,lty=2)
 abline(h=0.05,lty=2)
 axis(2, tck = -0.01, cex.axis = 1.5, las = 2)
@@ -283,6 +296,8 @@ plot(leesferry_long_df[,yr_col], leesferry_long_df[,roll_mean_col], type = 'l',
      axes = FALSE, lwd = 2)
 lines(leesferry_long_df[,yr_col], leesferry_long_df[,roll_mean_col],col='black', lwd=2, 
       panel.first = rect(c(LLE_lowerbound1, LLE_lowerbound2, LLE_lowerbound3, LLE_lowerbound4), -2, c(LLE_upperbound1, LLE_upperbound2, LLE_upperbound3, LLE_upperbound4), 32, col=high_pred_col, border=NA))
+lines(leesferry_long_df[,yr_col], leesferry_long_df[,roll_mean_col],col='black', lwd=2, 
+      panel.first = grid(NULL,NULL, lty = 3, col = "grey"))
 axis(2, cex.axis = 1.5, tck = -0.01, las =2)
 mtext(side=2, "Flow Average (MaF)", line = 3, cex = 1.3)
 mtext(side=3,"(b)",adj=0,line = -1.5,cex=1.3)
@@ -295,6 +310,8 @@ plot(leesferry_long_df[,yr_col], leesferry_long_df[,roll_var_col], type = 'l',
      axes = FALSE, lwd = 2)
 lines(leesferry_long_df[,yr_col], leesferry_long_df[,roll_var_col],col='black', lwd=2, 
       panel.first = rect(c(LLE_lowerbound1, LLE_lowerbound2, LLE_lowerbound3, LLE_lowerbound4), -2, c(LLE_upperbound1, LLE_upperbound2, LLE_upperbound3, LLE_upperbound4), 32, col=high_pred_col, border=NA))
+lines(leesferry_long_df[,yr_col], leesferry_long_df[,roll_var_col],col='black', lwd=2, 
+      panel.first = grid(NULL,NULL, lty = 3, col = "grey"))
 axis(2, cex.axis = 1.5, tck = -0.01, las =2)
 axis(1, cex.axis = 1.5, tck = -0.01, las =1)
 mtext(side=2, "Flow Variance (MaF)", line = 3, cex = 1.3)
@@ -311,6 +328,29 @@ dev.off()
 
 
 #####
+#temp: correlation plots of streamflow, signal, and average LLE
+#Loading all gauge data and storing it in a dataframe without opening all
+names_sub = c("greenriverwy", "greenriverut", "glenwood", "gunnison", "cisco", "leesferry-short")
+cols = c(flow_col, signal_col, avg_LLE_col)
+corr_name = c('flow', 'signal', 'avgLLE')
+plot_limit = c(0,0,-.1)
+for(i in 1:3){
+  col_num = cols[i]
+  Multi_df = data.frame(matrix(nrow = 451,ncol = 0))
+  for(name in names_sub){
+    #i = which(name==names)
+    data_df = read.csv(paste(datadir,name,"_ts.csv", sep = ""), header = TRUE)[col_num]
+    Multi_df[,ncol(Multi_df)+1] <- c(data_df)
+  }
+  colnames(Multi_df) = names_sub
+  
+  png(paste(graphdir,corr_name[i],"_corr_plot.png", sep=""), width = 150, height = 150, units='mm', res = 300)
+  Multp_plot = corrplot(cor(na.omit(Multi_df)), method = 'number',tl.col = 'black',is.corr = T, col.lim = c(plot_limit[i],1), tl.srt = 45, type = 'lower', col= COL2("BrBG"))
+  dev.off()
+}
+
+
+
 #make labels for area fraction plots 
 llabels = c("(c)", "(e)", "(f)", "(b)", "(d)", "(a)", "(g)")
 #Multiple figures
