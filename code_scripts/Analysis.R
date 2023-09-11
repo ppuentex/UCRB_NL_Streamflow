@@ -2,6 +2,7 @@ rm(list=ls())
 source("./code_scripts/function_library.r")
 library(fractal) #needed to use timeLag func 
 library(zoo)
+library(quantmod) #get peaks and valleys of time series
 
 
 #output directories
@@ -153,6 +154,71 @@ for(location in locations){
   
   id = names[counter]
   
+  #Step 5: Find min and max average LLE values
+  temp_table = data.frame()
+  #finds peak indexes [positive LLE]
+  p_i=findPeaks(raw_data$avgLLE) 
+  #get the values of LLE for peak indexes 
+  peak_values=raw_data$avgLLE[p_i]
+  #sort these values in decreasing order (+ lle to - lle)
+  sort_pval = sort(peak_values, index.return = TRUE, decreasing = TRUE)
+  #create peak matrix to store year and avg LLE value that pass the threshold (0.05)
+  #establish the 15 peaks
+  peak_mat = matrix(NA,15,2)
+  if(length(raw_data$year[p_i[sort_pval$ix[sort_pval$x>0.05]]])<=15){
+    for(i in 1:length(raw_data$year[p_i[sort_pval$ix[sort_pval$x>0.05]]])){
+      peak_mat[i,1] = raw_data$year[p_i[sort_pval$ix[sort_pval$x>0.05]]][i]
+      peak_mat[i,2] = sort_pval$x[sort_pval$x>0.05][i]
+    }
+  } else{
+    for(i in 1:15){
+      peak_mat[i,1] = raw_data$year[p_i[sort_pval$ix[sort_pval$x>0.05]]][i]
+      peak_mat[i,2] = sort_pval$x[sort_pval$x>0.05][i]
+    }
+  }
+  
+  peak_mat = as.data.frame(peak_mat)
+  
+  
+  #finds valley indexes 
+  v_i = findValleys(raw_data$avgLLE)
+  #get the values of LLE for valley indexes 
+  valley_values = raw_data$avgLLE[v_i] 
+  #sort these values in decreasing order (+ lle to - lle)
+  sort_vval = sort(valley_values, index.return = TRUE, decreasing = FALSE)
+  #create peak matrix to store year and avg LLE value
+  valley_mat = matrix(NA,15,2)
+  if(length(raw_data$year[v_i[sort_vval$ix[sort_vval$x<(-0.05)]]])<=15){
+    for(i in 1:length(raw_data$year[v_i[sort_vval$ix[sort_vval$x<(-0.05)]]])){
+      valley_mat[i,1] = raw_data$year[v_i[sort_vval$ix[sort_vval$x<(-0.05)]]][i]
+      valley_mat[i,2] = sort_vval$x[sort_vval$x<(-0.05)][i]
+    }
+  } else{
+    for(i in 1:15){
+      valley_mat[i,1] = raw_data$year[v_i[sort_vval$ix[sort_vval$x<(-0.05)]]][i]
+      valley_mat[i,2] = sort_vval$x[sort_vval$x<(-0.05)][i]
+    }
+  }
+  
+  valley_mat = as.data.frame(valley_mat)
+  
+  temp_table <- rbind(temp_table, valley_mat, peak_mat)
+  #combine into pred_table 
+  
+  
+  if(counter == 1){
+    #rbind for the first time to initially populate the dataframe 
+    pred_table <- rbind(pred_table, temp_table)
+  } else {
+    #cbind for the rest to continue 
+    pred_table <- cbind(pred_table, temp_table)
+  }
+  
+  pred_table_names <- append(pred_table_names,paste(id, "year", sep = "_"))
+  pred_table_names <- append(pred_table_names,paste(id, "avgLLEval", sep = "_"))
+  
+  
+  
   
   stats_output = c(names[counter], y_range, y_num, raw_avg, raw_range, 
                    lag_pick, dim_pick, roll_window, global_avgLLE)
@@ -174,8 +240,10 @@ stats_table
 write.csv(stats_table, file=paste(datadir,"ts_info.csv", sep=""),row.names=F)
 
 #outputting the years and values of high and low predictability for each location
-columns(pred_table) <- pred_table_names
+colnames(pred_table) <- pred_table_names
 pred_table 
+#save dataframe
+write.csv(pred_table, file=paste(datadir,"high-low_pred_years.csv", sep=""),row.names=F)
 
 
 
