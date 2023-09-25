@@ -80,19 +80,19 @@ obs_i <- c(which(leesferry_long_df$year==1906):tail(val_i, n=1))
 #Figure 1 (a) [once the paper is ready for submission, this is how it should be labeled]
 #temp: leesferry-long time series for showing flow only 
 #uncomment comments to label the first figure 
-png(paste(graphdir,"leesferry-long_flowts.png",sep = ""), width = 400, height = 150, units='mm', res = 300)
+png(paste(graphdir,"leesferry-long_flowts_1.png",sep = ""), width = 400, height = 150, units='mm', res = 300)
 par(mfrow=c(1,1),mar=c(4,5,3,1), mgp = c(2.5, 1, 0), cex.axis = 2, cex.lab =2)
 plot(leesferry_long_df[,yr_col], leesferry_long_df[,flow_col]/scale, ylim = c(0, range(leesferry_long_df[,flow_col]/scale)[2]), 
      type = 'l', lwd = 2.5, 
-     #col= colrs[6], 
-     col = 'black',
+     col= colrs[6], 
+     #col = 'black',
      panel.first = grid(NULL,NULL, lty = 3, col = "grey"),
      xlab = "Years", ylab = "Streamflow (MaF)", cex.lab = 2, 
      cex.axis = 2)
-#abline(v = leesferry_long_df[which(leesferry_long_df[,yr_col]==1569),yr_col], col = 'darkgrey', lwd = 6, lty = 2)
-#grid (NULL,NULL, lty = 3, col = "grey")
+abline(v = leesferry_long_df[which(leesferry_long_df[,yr_col]==1569),yr_col], col = 'darkgrey', lwd = 6, lty = 2)
+grid (NULL,NULL, lty = 3, col = "grey")
 mtext(side=3,"(a)",adj=0,cex=2)
-#legend("bottomright", legend="leesferry-long", lwd = 3, lty = 1, col = colrs[6], bty = 'n', cex =2)
+legend("bottomright", legend="leesferry-long", lwd = 3, lty = 1, col = colrs[6], bty = 'n', cex =2)
 dev.off()
 
 #temp: all time series for showing flow only
