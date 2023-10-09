@@ -29,17 +29,17 @@ Puente, P., Rajagopalan, B., Condon, L.E., Understanding the Temporal Variabilit
     - For exploration of methods and analysis, the `Analysis.R` script is written in a way that all analysis can be done to all gauge locations in one go. All results are written out to the `Output_Data` folder. 
 
 ### Folder Breakdown
-Folders have a separate readme to further explain the content. 
+Folders have a separate readme to further explain the content (except Figures). 
 
 #### [Code_Scripts](https://github.com/ppuentex/UCRB_NL_Streamflow/tree/main/Code_Scripts)
 These are the R scripts that contain the `function_library.R` necessary for running the analysis and figures. 
 
-#### Figures 
+#### Figures
 This folder contains all figures that are created from the R scripts.
 
-#### Input_Data
+#### [Input_Data](https://github.com/ppuentex/UCRB_NL_Streamflow/tree/main/Input_Data)
 These are the streamflow time series files from the [Bureau of Reclamation](https://www.usbr.gov/lc/region/g4000/NaturalFlow/current.html) and [Treeflow](https://www.treeflow.info/upper-colorado-basin). 
 
-#### Output_Data 
+#### [Output_Data](https://github.com/ppuentex/UCRB_NL_Streamflow/tree/main/Output_Data) 
 These are the output analysis time series such as the streamflow signal, average Local Lyapunov Exponent (LLE), rolling average, and rolling variance. Including simple statistics for each gauge and time delay, dimension embedding parameters, and global average LLE for each gauge. 
 
