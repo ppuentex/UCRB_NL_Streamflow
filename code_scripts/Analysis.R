@@ -1,23 +1,17 @@
-rm(list=ls())
-source("./code_scripts/function_library.r")
-library(fractal) #needed to use timeLag func 
-library(zoo)
-library(quantmod) #get peaks and valleys of time series
-
+rm(list=ls()) #clear out environment
+source("./code_scripts/function_library.r") #load function library 
+library(fractal) #needed to use timeLag, FNN, lyapunov functions 
+library(zoo) #needed to use rollapply function
+library(quantmod) #needed to find peaks and valleys of time series
 
 #output directories
 datadir = "./Output_Data/"
-
 
 #Select the column of data that will be used for the reconstructed 
 #this is always the second column for all data from treeflow
 recon_col=2 
 
-#window needed for rolling average, rolling variance to match avg LLE 
-#roll_window = 39
-
 scale = 1e6 #want to convert everything to MAF
-
 
 #Threshold for False nearest neighbors for dimension picking
 rt = 10 #threshold for declaring false neighbors - if distance between neighbors exceeds rt of that in the previous dimension they are FNN
@@ -26,16 +20,14 @@ fnn_th=10 #%FNN allowed
 # evolution periods that will be use for Lyapunov exponents
 exp_scale=c(1,2,4,8,16,20,32,64)
 scale_pick=20
-nscale=length(exp_scale)
-scalei=which(exp_scale==scale_pick)
 
-
+# names = file names we want; locations = file names from source 
 names = c("greenriverwy", "greenriverut", "glenwood", "gunnison", "cisco", "leesferry-short", "leesferry-long")
 locations = c("greenriverwy","greenriverut","COglenwood","gunnisonriver", "COcisco", "COleesmeko", "COleesmeko")
-startY_list = c(1569, 1569, 1569, 1569, 1569, 1569, 762)
+startY_list = c(1569, 1569, 1569, 1569, 1569, 1569, 762) 
 i_loc = c(6,7,3,4,5,2,2) #column index of location in observed data 
-upper_sig_list = c(0.77, 0.73, 0.61, 0.61, 0.68, 0.92, 0.95)
-lower_sig_list = c(0.7, 0.65, 0.55, 0.55, 0.6, 0.85, 0.9)
+upper_sig_list = c(0.77, 0.73, 0.61, 0.61, 0.68, 0.92, 0.95) #upper significance level for wavelet 
+lower_sig_list = c(0.7, 0.65, 0.55, 0.55, 0.6, 0.85, 0.9)#lower significance level for wavelet 
 
 #create dataframe to store the embedding parameters 
 stats_table = data.frame()
@@ -44,7 +36,6 @@ pred_table = data.frame(); pred_table_names = c()
 
 #initiate counter to use as index for each list
 counter = 0
-#location = locations[7]
 for(location in locations){
   counter = counter + 1 
   
@@ -61,9 +52,9 @@ for(location in locations){
   
   startR = startY_list[counter]
   istartR = which(raw_rec[,1]==startR)
-  endR = 1905 #end year for recon
+  endR = 1905 #end year for reconstruction
   iendR = which(raw_rec[,1]==endR)
-  startO = raw_obs[1,1] #start obs year
+  startO = raw_obs[1,1] #start observation year
   istartO = which(raw_obs[,1]==startO)
   endO = raw_obs[length(raw_obs[,1]),1]
   iendO = which(raw_obs[,1]==endO)
@@ -102,9 +93,6 @@ for(location in locations){
   
   
   #Step 4: Calculate Average Lyaponov exponent 
-  
-  #figure out how much of the signal can be used based on longest evolution period
-  #to be tested
   n.reference=10
   Ne=length(data_signal)-(lag_pick*(dim_pick-1)) #number of evaluation points 
   avgmax.ref=Ne-scale_pick-n.reference-2
@@ -133,11 +121,8 @@ for(location in locations){
   avg_write[(dist+1):(dist+length(avg.LL))] = avg.LL
   
   raw_data$avgLLE <- avg_write
-  
-  #find the difference in length of avg LLE and SF
-  #avgLLE_dif = length(raw_data[,2]) - length(avg.LL)
 
-  #need to figure this out 
+  #roll window that is used to calculate the rolling mean and rolling variance
   roll_window = scale_pick + n.reference + (lag_pick*(dim_pick-1)) +2 + 1
   #2 is subtracted in avg.ref and 1 is added to get additional year
   
@@ -148,9 +133,6 @@ for(location in locations){
   #calculate a centered rolling mean and rolling variance
   raw_data$flow_mean <- rollapply((raw_data[,2]/scale), width = roll_window, FUN = mean, align = "center", fill=NA)
   raw_data$flow_var <- rollapply((raw_data[,2]/scale), width=roll_window, FUN = var , align="center", fill = NA)
-  
-  #mean.diff = length(raw_data[,2]) - length(na.omit(raw_data$flow_mean))
-  #var.diff = length(raw_data[,2]) - length(na.omit(raw_data$flow_var))
   
   id = names[counter]
   
@@ -201,10 +183,9 @@ for(location in locations){
   }
   
   valley_mat = as.data.frame(valley_mat)
-  
-  temp_table <- rbind(temp_table, valley_mat, peak_mat)
   #combine into pred_table 
-  
+  temp_table <- rbind(temp_table, valley_mat, peak_mat)
+
   
   if(counter == 1){
     #rbind for the first time to initially populate the dataframe 
@@ -218,11 +199,9 @@ for(location in locations){
   pred_table_names <- append(pred_table_names,paste(id, "avgLLEval", sep = "_"))
   
   
-  
-  
   stats_output = c(names[counter], y_range, y_num, raw_avg, raw_range, 
                    lag_pick, dim_pick, roll_window, global_avgLLE)
-                   #avgLLE_dif, mean.diff, var.diff, roll_window)
+
   
   stats_table = rbind(stats_table, stats_output)
   
@@ -230,11 +209,8 @@ for(location in locations){
   
 }
 #prints table of embedding parameters  for each location 
-
-
 colnames(stats_table) <- c("flow ts" ,"Year Range", "# of Years", "Mean (MAF)", 
                            "Flow Range (MAF)", "Time Lag", "Dim embedding", 
-                           #"avg LLE diff", "mean diff ", "var diff", "roll window")
                            "roll window", "global average LLE")
 stats_table
 write.csv(stats_table, file=paste(datadir,"ts_info.csv", sep=""),row.names=F)
@@ -242,8 +218,5 @@ write.csv(stats_table, file=paste(datadir,"ts_info.csv", sep=""),row.names=F)
 #outputting the years and values of high and low predictability for each location
 colnames(pred_table) <- pred_table_names
 pred_table 
-#save dataframe
+#save high low predictability years 
 write.csv(pred_table, file=paste(datadir,"high-low_pred_years.csv", sep=""),row.names=F)
-
-
-
