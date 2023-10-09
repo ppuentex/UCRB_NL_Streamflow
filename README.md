@@ -31,7 +31,7 @@ Puente, P., Rajagopalan, B., Condon, L.E., Understanding the Temporal Variabilit
 ### Folder Breakdown
 Folders have a separate readme to further explain the content. 
 
-#### [Code_Scripts]{https://github.com/ppuentex/UCRB_NL_Streamflow/tree/main/Code_Scripts}
+#### [Code_Scripts](https://github.com/ppuentex/UCRB_NL_Streamflow/tree/main/Code_Scripts)
 These are the R scripts that contain the `function_library.R` necessary for running the analysis and figures. 
 
 #### Figures 
