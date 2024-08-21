@@ -34,7 +34,7 @@ Folders have a separate readme to further explain the content (except Figures).
 #### [Code_Scripts](https://github.com/ppuentex/UCRB_NL_Streamflow/tree/main/Code_Scripts)
 These are the R scripts that contain the `function_library.R` necessary for running the analysis and figures. 
 
-#### Figures
+#### [Figures](https://github.com/ppuentex/UCRB_NL_Streamflow/tree/main/Figures)
 This folder contains all figures that are created from the R scripts.
 
 #### [Input_Data](https://github.com/ppuentex/UCRB_NL_Streamflow/tree/main/Input_Data)
