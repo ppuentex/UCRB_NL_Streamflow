@@ -197,7 +197,7 @@ dev.off()
 #######Figure 12 (a)-(h)#######
 #leesferry - long scatterplots 
 all_avg<-ggplot(data=NULL, aes(leesferry_long_df$avgLLE[val_i], leesferry_long_df$flow_mean[val_i], col = leesferry_long_df$year[val_i])) + 
-  stat_poly_line(se = FALSE, color = 'black') + stat_correlation() + geom_point(size=1) +
+  stat_poly_line(se = FALSE, color = 'black') + stat_correlation(aes(label = paste(after_stat(r.label),after_stat(p.value.label), sep = "*\", \"*"))) + geom_point(size=1) +
   scale_color_gradient(high = "#000033", low = "#CCCCFF") + 
   labs(title = '(a)' , x ="", y = "Flow Average (MAF)") + 
   theme(legend.title =element_text(size = 13), axis.title=element_text(size=15),plot.title = element_text(size=15), legend.text =element_text(size = 13),axis.text.x = element_text(size = 13), axis.text.y = element_text(size = 13)) +
@@ -205,7 +205,7 @@ all_avg<-ggplot(data=NULL, aes(leesferry_long_df$avgLLE[val_i], leesferry_long_d
 
 pre_avg<- ggplot(data=NULL, aes(leesferry_long_df$avgLLE[pre_i], leesferry_long_df$flow_mean[pre_i], col = leesferry_long_df$year[pre_i])) + 
   xlim(range(na.omit(leesferry_long_df$avgLLE))) + ylim(range(na.omit(leesferry_long_df$flow_mean))) + 
-  stat_poly_line(se = FALSE, color = 'black') + stat_correlation() + geom_point(size=1) +
+  stat_poly_line(se = FALSE, color = 'black') + stat_correlation(aes(label = paste(after_stat(r.label),after_stat(p.value.label), sep = "*\", \"*"))) + geom_point(size=1) +
   scale_color_gradient(high = "#003333", low = "#CCFFFF") +
   labs(title = '(c)' , x ="", y = "Flow Average (MAF)") + 
   theme(legend.title =element_text(size = 13), axis.title=element_text(size=15),plot.title = element_text(size=15), legend.text =element_text(size = 13),axis.text.x = element_text(size = 13), axis.text.y = element_text(size = 13)) +
@@ -213,7 +213,7 @@ pre_avg<- ggplot(data=NULL, aes(leesferry_long_df$avgLLE[pre_i], leesferry_long_
 
 post_avg<- ggplot(data=NULL, aes(leesferry_long_df$avgLLE[post_i], leesferry_long_df$flow_mean[post_i], col = leesferry_long_df$year[post_i])) + 
   xlim(range(na.omit(leesferry_long_df$avgLLE))) + ylim(range(na.omit(leesferry_long_df$flow_mean))) + 
-  stat_poly_line(se = FALSE, color = 'black') + stat_correlation() + geom_point(size=1) +
+  stat_poly_line(se = FALSE, color = 'black') + stat_correlation(aes(label = paste(after_stat(r.label),after_stat(p.value.label), sep = "*\", \"*"))) + geom_point(size=1) +
   scale_color_gradient(high = "#FF3300", low = "#FFCC99") + 
   labs(title = '(e)' , x =" ", y = "Flow Average (MAF)") + 
   theme(legend.title =element_text(size = 13), axis.title=element_text(size=15),plot.title = element_text(size=15), legend.text =element_text(size = 13),axis.text.x = element_text(size = 13), axis.text.y = element_text(size = 13)) +
@@ -221,7 +221,7 @@ post_avg<- ggplot(data=NULL, aes(leesferry_long_df$avgLLE[post_i], leesferry_lon
 
 obs_avg <- ggplot(data=NULL, aes(leesferry_long_df$avgLLE[obs_i], leesferry_long_df$flow_mean[obs_i], col = leesferry_long_df$year[obs_i])) + 
   xlim(range(na.omit(leesferry_long_df$avgLLE))) + ylim(range(na.omit(leesferry_long_df$flow_mean))) + 
-  stat_poly_line(se = FALSE, color = 'black') + stat_correlation() + geom_point(size=1) +
+  stat_poly_line(se = FALSE, color = 'black') + stat_correlation(aes(label = paste(after_stat(r.label),after_stat(p.value.label), sep = "*\", \"*"))) + geom_point(size=1) +
   scale_color_gradient(high = "#CC33CC", low = "#FFCCFF") + 
   labs(title = '(g)' , x ="Average LLE", y = "Flow Average (MAF)") +
   theme(legend.title =element_text(size = 13), axis.title=element_text(size=15),plot.title = element_text(size=15), legend.text =element_text(size = 13),axis.text.x = element_text(size = 13), axis.text.y = element_text(size = 13)) +
@@ -230,28 +230,28 @@ obs_avg <- ggplot(data=NULL, aes(leesferry_long_df$avgLLE[obs_i], leesferry_long
 #var SF and avg LLE 
 all_var<-ggplot(data=NULL, aes(leesferry_long_df$avgLLE[val_i], leesferry_long_df$flow_var[val_i], col = leesferry_long_df$year[val_i])) + 
   xlim(range(leesferry_long_df$avgLLE[val_i])) + ylim(c(0,30)) + 
-  stat_poly_line(se = FALSE, color = 'black') + stat_correlation() + geom_point(size=1) + 
+  stat_poly_line(se = FALSE, color = 'black') + stat_correlation(aes(label = paste(after_stat(r.label),after_stat(p.value.label), sep = "*\", \"*"))) + geom_point(size=1) + 
   scale_color_gradient(high = "#000033", low = "#CCCCFF") + 
   labs(title = '(b)' , x ="", y = "Flow Variance (MAF)", color = "All Years") + 
   theme(legend.title =element_text(size = 13), axis.title=element_text(size=15),plot.title = element_text(size=15), legend.text =element_text(size = 13),axis.text.x = element_text(size = 13), axis.text.y = element_text(size = 13))
 
 pre_var<-ggplot(data=NULL, aes(leesferry_long_df$avgLLE[pre_i], leesferry_long_df$flow_var[pre_i], col = leesferry_long_df$year[pre_i])) + 
   xlim(range(leesferry_long_df$avgLLE[val_i])) + ylim(c(0,30)) + 
-  stat_poly_line(se = FALSE, color = 'black') + stat_correlation() + geom_point(size=1) + 
+  stat_poly_line(se = FALSE, color = 'black') + stat_correlation(aes(label = paste(after_stat(r.label),after_stat(p.value.label), sep = "*\", \"*"))) + geom_point(size=1) + 
   scale_color_gradient(high = "#003333", low = "#CCFFFF") + 
   labs(title = '(d)' , x ="", y = "Flow Variance (MAF)", color = "762 - 1489") + 
   theme(legend.title =element_text(size = 13), axis.title=element_text(size=15),plot.title = element_text(size=15), legend.text =element_text(size = 13),axis.text.x = element_text(size = 13), axis.text.y = element_text(size = 13))
 
 post_var<-ggplot(data=NULL, aes(leesferry_long_df$avgLLE[post_i], leesferry_long_df$flow_var[post_i], col = leesferry_long_df$year[post_i])) + 
   xlim(range(leesferry_long_df$avgLLE[val_i])) + ylim(c(0,30)) + 
-  stat_poly_line(se = FALSE, color = 'black') + stat_correlation() + geom_point(size=1) + 
+  stat_poly_line(se = FALSE, color = 'black') + stat_correlation(aes(label = paste(after_stat(r.label),after_stat(p.value.label), sep = "*\", \"*"))) + geom_point(size=1) + 
   scale_color_gradient(high = "#FF3300", low = "#FFCC99") + 
   labs(title = '(f)' , x ="", y = "Flow Variance (MAF)", color = "1490 - 1905") + 
   theme(legend.title =element_text(size = 13), axis.title=element_text(size=15),plot.title = element_text(size=15), legend.text =element_text(size = 13),axis.text.x = element_text(size = 13), axis.text.y = element_text(size = 13))
 
 obs_var<-ggplot(data=NULL, aes(leesferry_long_df$avgLLE[obs_i],leesferry_long_df$flow_var[obs_i], col = leesferry_long_df$year[obs_i])) + 
   xlim(range(leesferry_long_df$avgLLE[val_i])) + ylim(c(0,30)) + 
-  stat_poly_line(se = FALSE, color = 'black') + stat_correlation() + geom_point(size=1) + 
+  stat_poly_line(se = FALSE, color = 'black') + stat_correlation(aes(label = paste(after_stat(r.label),after_stat(p.value.label), sep = "*\", \"*"))) + geom_point(size=1) + 
   scale_color_gradient(high = "#CC33CC", low = "#FFCCFF") + 
   labs(title = '(h)' , x ="Average LLE", y = "Flow Variance (MAF)", color = "1906 - 2019") + 
   theme(legend.title =element_text(size = 13), axis.title=element_text(size=15),plot.title = element_text(size=15), legend.text =element_text(size = 13),axis.text.x = element_text(size = 13), axis.text.y = element_text(size = 13))
