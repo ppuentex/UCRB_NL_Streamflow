@@ -37,7 +37,7 @@ low_pred_col = "#FF9999"
 scale = 1e6 #for MaF conversion 
 names = c("greenriverwy", "greenriverut", "glenwood", "gunnison", "cisco", "leesferry-short", "leesferry-long")
 names_sub = c("greenriverwy", "greenriverut", "glenwood", "gunnison", "cisco", "leesferry-short")
-colrs = c("#88DEB0", "#2573B5", "#4EADAF", "#377A98", "#1034A6", "#003152", "#003152")
+colrs = c("#88DEB0", "#ED9121", "#FF6347", "#377A98", "#1034A6", "#003152", "#003152")
 startY_list = c(1569, 1569, 1569, 1569, 1569, 1569, 762)
 upper_sig_list = c(0.77, 0.73, 0.61, 0.61, 0.68, 0.92, 0.95)
 
