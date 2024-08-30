@@ -8,7 +8,7 @@ This repository contains the nonlinear analysis performed on streamflow time ser
 
 By using this repository or data in your publications, you agree to cite:
 ```
-Puente, P., Rajagopalan, B., Condon, L.E., Understanding the Temporal Variability and Predictability of Streamflow Signatures in the Colorado River Basin [under review], 2023.
+Puente, P., Rajagopalan, B., Condon, L.E., Understanding the Temporal Variability and Predictability of Streamflow Signatures in the Colorado River Basin [under review], 2024.
 ```
 
 ### Getting Started 
