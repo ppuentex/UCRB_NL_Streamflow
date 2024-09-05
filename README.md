@@ -3,7 +3,7 @@
 *by Patricia Puente, Balaji Rajagopalan, Laura E. Condon*
 
 ### Description
-This repository contains the nonlinear analysis performed on streamflow time series in the Colorado River Basin and all output figures for manuscript. This workflow is intended for RStudio. The jupyter notebook included is for data processing purpose only. Use if intention is to give an updated Recorded Streamflow from [Bureau of Reclamation](https://www.usbr.gov/lc/region/g4000/NaturalFlow/current.html).
+This repository contains the nonlinear analysis performed on streamflow time series in the Upper Colorado River Basin and figures included in the paper cited below. This workflow is intended for RStudio. Each folder has a specific readme file with instructions. 
 
 
 By using this repository or data in your publications, you agree to cite:

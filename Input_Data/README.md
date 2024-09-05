@@ -2,7 +2,7 @@
 
 #### Observed Data
 
-The data-processing folder contains the raw observed stream flow data for the Colorado River Basin retrieved from [Bureau of Reclamation](https://www.usbr.gov/lc/region/g4000/NaturalFlow/current.html) along with a Jupyter Notebook that processes this data in order to retrieve only the total annual water year stream flow for the gauges of interest. This workflow created the MultiObserved_data.csv in the Input_Data folder. 
+The data-processing folder contains the raw observed stream flow data for the Colorado River Basin retrieved from [Bureau of Reclamation](https://www.usbr.gov/lc/region/g4000/NaturalFlow/current.html) along with a Jupyter Notebook that processes this data in order to retrieve only the total annual water year stream flow for the gauges of interest. This workflow created the MultiObserved_data.csv in the Input_Data folder. Use ONLY if the intention is to give an updated Recorded Streamflow from [Bureau of Reclamation](https://www.usbr.gov/lc/region/g4000/NaturalFlow/current.html) or want to consider more gauges besides the ones used in this study.
 
  - NaturalFlows1906-2019_20210420.xlsx edition was last revised 04-15-2021
  
