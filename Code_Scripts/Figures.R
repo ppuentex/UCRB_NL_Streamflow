@@ -34,10 +34,10 @@ roll_var_col = 7
 #parameters 
 high_pred_col = "#99CCFF"
 low_pred_col = "#FF9999"
-scale = 1e6 #for MaF conversion 
+scale = 1e6 #for MAF conversion 
 names = c("greenriverwy", "greenriverut", "glenwood", "gunnison", "cisco", "leesferry-short", "leesferry-long")
 names_sub = c("greenriverwy", "greenriverut", "glenwood", "gunnison", "cisco", "leesferry-short")
-colrs = c("#88DEB0", "#ED9121", "#FF6347", "#377A98", "#1034A6", "#003152", "#003152")
+colrs = c("#ED9121","#FF6347", "#88DEB0", "#377A98", "#1034A6", "#003152", "#003152")
 startY_list = c(1569, 1569, 1569, 1569, 1569, 1569, 762)
 upper_sig_list = c(0.77, 0.73, 0.61, 0.61, 0.68, 0.92, 0.95)
 
@@ -62,23 +62,23 @@ high_pred = list(c(1820,1872,1692,1650), #greenriverwy
                  c(1787,1882,1941,1656), #leesferry-short
                  c(1161,861,1021,1256)) #leesferry-long
 
-#single figures data load 
+#load data for leesferry only  
 leesferry_long_df = read.csv("./Output_Data/leesferry-long_ts.csv", header = TRUE)
 leesferry_short_df = read.csv("./Output_Data/leesferry-short_ts.csv", header = TRUE)
 
 sf_mean = mean(leesferry_long_df[,flow_col]/scale)
 sf_sd = sd(leesferry_long_df[,flow_col]/scale)
-#this data signal is expressed in MaF 
+#this data signal is expressed in MAF 
 data_signal = scale(leesferry_long_df[,signal_col]) * sf_sd + sf_mean
 
 #indexes for non-na values
 val_i=which(!is.na(leesferry_long_df$avgLLE))
 #grab index of pre, post, and observed years [used for box plots and scatterplots]
-#762 - 1489
-pre_i <- c(val_i[1]:which(leesferry_long_df$year==1489))
-#1490 - 1905
-post_i <- c((which(leesferry_long_df$year==1490)):which(leesferry_long_df$year==1905))
-#1906 - 2020
+#762 - 1333
+pre_i <- c(val_i[1]:which(leesferry_long_df$year==1333))
+#1334 - 1905
+post_i <- c((which(leesferry_long_df$year==1334)):which(leesferry_long_df$year==1905))
+#1906 - 2019
 obs_i <- c(which(leesferry_long_df$year==1906):tail(val_i, n=1))
 
 #get the years of high and low predictability for leesferry-long only 
@@ -87,7 +87,7 @@ high_list = as.integer(high_pred[[7]])
 
 #######Figure 2 (a)#######
 #leesferry-long time series for showing flow only 
-png(paste(graphdir,"leesferry-long_flowts_1.png",sep = ""), width = 400, height = 150, units='mm', res = 300)
+png(paste(graphdir,"Fig2a-leesferry-long_flowts.png",sep = ""), width = 400, height = 150, units='mm', res = 300)
 par(mfrow=c(1,1),mar=c(4,5,3,1), mgp = c(2.5, 1, 0), cex.axis = 2, cex.lab =2)
 plot(leesferry_long_df[,yr_col], leesferry_long_df[,flow_col]/scale, ylim = c(0, range(leesferry_long_df[,flow_col]/scale)[2]), 
      type = 'l', lwd = 2.5, 
@@ -103,7 +103,7 @@ dev.off()
 
 #######Figure 2 (b)#######
 #all gauge time series for showing flow only
-png(paste(graphdir,"allgauge_flowts.png",sep = ""), width = 400, height = 150, units='mm', res = 300)
+png(paste(graphdir,"Fig2b-allgauge_flowts.png",sep = ""), width = 400, height = 150, units='mm', res = 300)
 par(mfrow=c(1,1),mar=c(4,5,3,1), mgp = c(2.5, 1, 0), cex.axis = 2, cex.lab =2)
 plot(leesferry_short_df[,yr_col], leesferry_short_df[,flow_col]/scale, ylim = c(0, range(leesferry_short_df[,flow_col]/scale)[2]), 
      type = 'l', lwd = 2.5, col= colrs[6],panel.first = grid(NULL,NULL, lty = 3, col = "grey"),
@@ -196,7 +196,7 @@ dev.off()
 
 #######Figure 12 (a)-(h)#######
 #leesferry - long scatterplots 
-all_avg<-ggplot(data=NULL, aes(leesferry_long_df$avgLLE[val_i], leesferry_long_df$flow_mean[val_i], col = leesferry_long_df$year[val_i])) + 
+all_avg<-ggplot(data=NULL, aes(leesferry_long_df$avgLLE[val_i], leesferry_long_df$flow_mean[val_i], col = leesferry_long_df$year[val_i])) + ylim(12.9,16.5) +
   stat_poly_line(se = FALSE, color = 'black') + stat_correlation(aes(label = paste(after_stat(r.label),after_stat(p.value.label), sep = "*\", \"*"))) + geom_point(size=1) +
   scale_color_gradient(high = "#000033", low = "#CCCCFF") + 
   labs(title = '(a)' , x ="", y = "Flow Average (MAF)") + 
@@ -204,7 +204,7 @@ all_avg<-ggplot(data=NULL, aes(leesferry_long_df$avgLLE[val_i], leesferry_long_d
   guides(colour="none")
 
 pre_avg<- ggplot(data=NULL, aes(leesferry_long_df$avgLLE[pre_i], leesferry_long_df$flow_mean[pre_i], col = leesferry_long_df$year[pre_i])) + 
-  xlim(range(na.omit(leesferry_long_df$avgLLE))) + ylim(range(na.omit(leesferry_long_df$flow_mean))) + 
+  xlim(range(na.omit(leesferry_long_df$avgLLE))) + ylim(12.9,16.5) + 
   stat_poly_line(se = FALSE, color = 'black') + stat_correlation(aes(label = paste(after_stat(r.label),after_stat(p.value.label), sep = "*\", \"*"))) + geom_point(size=1) +
   scale_color_gradient(high = "#003333", low = "#CCFFFF") +
   labs(title = '(c)' , x ="", y = "Flow Average (MAF)") + 
@@ -212,7 +212,7 @@ pre_avg<- ggplot(data=NULL, aes(leesferry_long_df$avgLLE[pre_i], leesferry_long_
   guides(colour="none") 
 
 post_avg<- ggplot(data=NULL, aes(leesferry_long_df$avgLLE[post_i], leesferry_long_df$flow_mean[post_i], col = leesferry_long_df$year[post_i])) + 
-  xlim(range(na.omit(leesferry_long_df$avgLLE))) + ylim(range(na.omit(leesferry_long_df$flow_mean))) + 
+  xlim(range(na.omit(leesferry_long_df$avgLLE))) + ylim(12.9,16.5) + 
   stat_poly_line(se = FALSE, color = 'black') + stat_correlation(aes(label = paste(after_stat(r.label),after_stat(p.value.label), sep = "*\", \"*"))) + geom_point(size=1) +
   scale_color_gradient(high = "#FF3300", low = "#FFCC99") + 
   labs(title = '(e)' , x =" ", y = "Flow Average (MAF)") + 
@@ -220,7 +220,7 @@ post_avg<- ggplot(data=NULL, aes(leesferry_long_df$avgLLE[post_i], leesferry_lon
   guides(colour="none") #turns off spectrum on side 
 
 obs_avg <- ggplot(data=NULL, aes(leesferry_long_df$avgLLE[obs_i], leesferry_long_df$flow_mean[obs_i], col = leesferry_long_df$year[obs_i])) + 
-  xlim(range(na.omit(leesferry_long_df$avgLLE))) + ylim(range(na.omit(leesferry_long_df$flow_mean))) + 
+  xlim(range(na.omit(leesferry_long_df$avgLLE))) + ylim(12.9,16.5) + 
   stat_poly_line(se = FALSE, color = 'black') + stat_correlation(aes(label = paste(after_stat(r.label),after_stat(p.value.label), sep = "*\", \"*"))) + geom_point(size=1) +
   scale_color_gradient(high = "#CC33CC", low = "#FFCCFF") + 
   labs(title = '(g)' , x ="Average LLE", y = "Flow Average (MAF)") +
@@ -239,14 +239,14 @@ pre_var<-ggplot(data=NULL, aes(leesferry_long_df$avgLLE[pre_i], leesferry_long_d
   xlim(range(leesferry_long_df$avgLLE[val_i])) + ylim(c(0,30)) + 
   stat_poly_line(se = FALSE, color = 'black') + stat_correlation(aes(label = paste(after_stat(r.label),after_stat(p.value.label), sep = "*\", \"*"))) + geom_point(size=1) + 
   scale_color_gradient(high = "#003333", low = "#CCFFFF") + 
-  labs(title = '(d)' , x ="", y = "Flow Variance (MAF)", color = "762 - 1489") + 
+  labs(title = '(d)' , x ="", y = "Flow Variance (MAF)", color = "762 - 1333") + 
   theme(legend.title =element_text(size = 13), axis.title=element_text(size=15),plot.title = element_text(size=15), legend.text =element_text(size = 13),axis.text.x = element_text(size = 13), axis.text.y = element_text(size = 13))
 
 post_var<-ggplot(data=NULL, aes(leesferry_long_df$avgLLE[post_i], leesferry_long_df$flow_var[post_i], col = leesferry_long_df$year[post_i])) + 
   xlim(range(leesferry_long_df$avgLLE[val_i])) + ylim(c(0,30)) + 
   stat_poly_line(se = FALSE, color = 'black') + stat_correlation(aes(label = paste(after_stat(r.label),after_stat(p.value.label), sep = "*\", \"*"))) + geom_point(size=1) + 
   scale_color_gradient(high = "#FF3300", low = "#FFCC99") + 
-  labs(title = '(f)' , x ="", y = "Flow Variance (MAF)", color = "1490 - 1905") + 
+  labs(title = '(f)' , x ="", y = "Flow Variance (MAF)", color = "1334 - 1905") + 
   theme(legend.title =element_text(size = 13), axis.title=element_text(size=15),plot.title = element_text(size=15), legend.text =element_text(size = 13),axis.text.x = element_text(size = 13), axis.text.y = element_text(size = 13))
 
 obs_var<-ggplot(data=NULL, aes(leesferry_long_df$avgLLE[obs_i],leesferry_long_df$flow_var[obs_i], col = leesferry_long_df$year[obs_i])) + 
@@ -449,14 +449,14 @@ box()
 
 boxplot(high_pred_var_pre,low_pred_var_pre, axes = FALSE,
         at = c(1,2), ylim=c(0,25), border = "#003333", col = "#CCFFFF")
-mtext("762-1489", side = 3, outer = T, line = 0.5, adj = 0.35, cex = 1.2)
+mtext("762-1333", side = 3, outer = T, line = 0.5, adj = 0.35, cex = 1.2)
 mtext("High", side = 1, outer = T, line = 0.5, adj = 0.3, cex=1.2)
 mtext("Low", side = 1, outer = T, line = 0.5, adj = 0.43, cex=1.2)
 box()
 
 boxplot(high_pred_var_post,low_pred_var_post, axes = FALSE,
         at = c(1,2), ylim=c(0,25), border = "#FF3300", col = "#FFCC99")
-mtext("1490-1905", side = 3, outer = T, line = 0.5, adj = 0.65, cex=1.2)
+mtext("1490-1334", side = 3, outer = T, line = 0.5, adj = 0.65, cex=1.2)
 mtext("High", side = 1, outer = T, line = 0.5, adj = 0.57, cex=1.2)
 mtext("Low", side = 1, outer = T, line = 0.5, adj = 0.71, cex=1.2)
 box()
@@ -483,14 +483,14 @@ box()
 
 boxplot(high_pred_avg_pre,low_pred_avg_pre, axes = FALSE,
         at = c(1,2), ylim=c(12,18), border = "#003333", col = "#CCFFFF")
-mtext("762-1489", side = 3, outer = T, line = 0.5, adj = 0.35, cex = 1.2)
+mtext("762-1333", side = 3, outer = T, line = 0.5, adj = 0.35, cex = 1.2)
 mtext("High", side = 1, outer = T, line = 0.5, adj = 0.3, cex=1.2)
 mtext("Low", side = 1, outer = T, line = 0.5, adj = 0.43, cex=1.2)
 box()
 
 boxplot(high_pred_avg_post,low_pred_avg_post, axes = FALSE,
         at = c(1,2), ylim=c(12,18), border = "#FF3300", col = "#FFCC99")
-mtext("1490-1905", side = 3, outer = T, line = 0.5, adj = 0.65, cex=1.2)
+mtext("1334-1905", side = 3, outer = T, line = 0.5, adj = 0.65, cex=1.2)
 mtext("High", side = 1, outer = T, line = 0.5, adj = 0.57, cex=1.2)
 mtext("Low", side = 1, outer = T, line = 0.5, adj = 0.71, cex=1.2)
 box()
