@@ -7,10 +7,9 @@ This repository contains the nonlinear analysis performed on streamflow time ser
 
 
 By using this repository or data in your publications, you agree to cite:
-```
-Puente, P., Rajagopalan, B., & Condon, L. E. (2025). Understanding the temporal variability and predictability of streamflow signatures in the Colorado River Basin. Journal of Hydrology. https://doi.org/10.1016/j.jhydrol.2024.132386![image](https://github.com/user-attachments/assets/206b18fb-fbf8-4137-bb4a-618acc5a07f5)
 
-```
+> Puente, P., Rajagopalan, B., & Condon, L. E. (2025). Understanding the temporal variability and predictability of streamflow signatures in the Colorado River Basin. Journal of Hydrology. [https://doi.org/10.1016/j.jhydrol.2024.132386](https://doi.org/10.1016/j.jhydrol.2024.132386)
+
 
 ### Getting Started 
 1. If not installed, install RStudio by following these instructions [RStudio Installation](https://rstudio-education.github.io/hopr/starting.html)
